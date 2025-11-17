@@ -1,15 +1,26 @@
 ---
-- name: Create a new system user
+- name: Create user 'test1' and set a password
   hosts: your_target_group_name
-  become: yes  # Required to run commands as root (necessary for user creation)
+  become: yes
+
+  vars:
+    # Set the plaintext password here. 
+    # For better security, consider moving this to a vault file.
+    user_password: "Pa$$w0rd"
 
   tasks:
-    - name: Ensure user 'test1' is present
+    - name: Set up the hashed password
+      ansible.builtin.set_fact:
+        hashed_password: "{{ user_password | password_hash('sha512') }}"
+
+    - name: Ensure user 'test1' is present with the hashed password
       ansible.builtin.user:
         name: test1
         state: present
-        comment: "Test User 1 for Automation"
-        # Optional: Set the user's shell (default is usually /bin/bash or /bin/sh)
+        comment: "Automated User Creation"
         shell: /bin/bash
-        # Optional: Set the home directory (creates it if it doesn't exist)
         home: /home/test1
+        # Use the securely generated hash
+        password: "{{ hashed_password }}"
+        # Ensure the user's password expires after creation (forces them to change it on first login)
+        update_password: on_create
