@@ -1,7 +1,15 @@
-- name: Hello World Sample
-  hosts: all
-  tasks:
-    - name: Hello Message
-      debug:
-        msg: "Hello World!"
+---
+- name: Create a new system user
+  hosts: your_target_group_name
+  become: yes  # Required to run commands as root (necessary for user creation)
 
+  tasks:
+    - name: Ensure user 'test1' is present
+      ansible.builtin.user:
+        name: test1
+        state: present
+        comment: "Test User 1 for Automation"
+        # Optional: Set the user's shell (default is usually /bin/bash or /bin/sh)
+        shell: /bin/bash
+        # Optional: Set the home directory (creates it if it doesn't exist)
+        home: /home/test1
