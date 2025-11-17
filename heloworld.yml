@@ -1,6 +1,6 @@
 ---
 - name: Create user 'test1' and set a password
-  hosts: your_target_group_name
+  hosts: 192.168.198.132
   become: yes
 
   vars:
